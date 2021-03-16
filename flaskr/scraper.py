@@ -1,16 +1,11 @@
 # -*- coding: utf-8 -*-
-import scraping
-import csv
+import config
+import pandas as pd
+from scraping import googlenews, indiatoday, cnn, who
 
 def refresh_data():
-    pass
-#    who_data.download_data()
-#    cnn_data = cnn.scrap_data()
-#    google_news_data = googlenews.scrap_data()
-#    indiatoday_data = indiatoday.scrap_data()
-#    csv.writer()
-#      news.append({"href":href, 
-#                     "head":head, 
-#                     "sub_head":sub_head,
-#                     "content":content}])
-    
+    who.download_data() # Download data.csv file from who website
+    googlenews_df = pd.DataFrame(googlenews.scrap_data())
+    googlenews_df.to_csv("../data/googlenews.csv", 
+                         date_format=config.DATE_FORMAT, sep=config.CSV_DELIMITER)
+    print("Data refreshed Successful.")

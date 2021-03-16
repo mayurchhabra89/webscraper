@@ -1,42 +1,39 @@
 # -*- coding: utf-8 -*-
-import re
-from bs4 import BeautifulSoup
 import requests
+import config
+from bs4 import BeautifulSoup
+from newspaper import Article
+from tld import get_tld
 
-URL = "https://www.google.com/search?q=covid+19&lr=lang_en&cr=countryIN&tbs=lr:lang_1en,ctr:countryIN&source=lnms&tbm=nws&sa=X&ved=2ahUKEwjyv7Wxu6jvAhW5qksFHe1gAskQ_AUoAXoECFAQAw&biw=1792&bih=1041"
+QUERY = "covid-19"
+#URL for Google News Tab
+QUERY_URL ="https://www.google.com/search?q={}&lr=lang_en&cr=countryIN&tbs=lr:lang_1en,ctr:countryIN&source=lnms&tbm=nws&sa=X&ved=2ahUKEwjyv7Wxu6jvAhW5qksFHe1gAskQ_AUoAXoECFAQAw&biw=1792&bih=1041"
 
 def scrap_data():
-    html = requests.get(google_query_covid19).text
+    search_url = QUERY_URL.format(QUERY)
+    html = requests.get(search_url).text
     soup = BeautifulSoup(html, 'lxml')
     
+    news = list()
     articles = soup.find_all("div", class_="ZINbbc xpd O9g5cc uUPGi")
     for a in articles:
         if a.text.startswith("Popular on Twitter"):
             continue
-        print('ARTICLE:')
-        print("*"*10)
-        for headline in a.find_all("div", class_="BNeawe vvjwJb AP7Wnd"):
-            print("HEADLINE:", headline.text, "\n")
-            
+        head = a.find("div", class_="BNeawe vvjwJb AP7Wnd")
+        subhead = a.find("div", class_="BNeawe s3v9rd AP7Wnd")
         
+        url = a.find("a", href=True)
+        url = url['href'].lstrip("/url?q=")
+        url = url.split("&")[0]
         
-        unwanted = a.find('span')
-        unwanted.extract()
-        unwanted = a.find('span')
-        unwanted.extract()
-        
-        for content in a.find_all("div", class_="BNeawe s3v9rd AP7Wnd"):
-            print("Content:", content.text, "\n")
-            break
-            
-
-    
-    for i in a.find_all("a", href=True):
-        print(i['href'].split("=")[1], "\n")
-        break
-    
-    print("-"*100)
-        
-        
-        
-
+        article = Article(url)
+        article.download()
+        article.parse()
+        news.append({"head" : head.text,
+                             "subhead" : subhead.text,
+                             "url" : url,
+                             "source":get_tld(url, as_object=True).fld,
+                             "publish_date": article.publish_date,
+                             "content" : article.text.replace("\n",config.CUSTOM_NEW_LINE)})
+    print("Google News results scrapped successfully")
+    return news

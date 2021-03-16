@@ -36,9 +36,10 @@
 <table style="overflow-y:auto;height:300px">
   <tr>
       <th>News</th>
+      <th>Source</th>
       <th>Polarity</th>
       <th>Subjectivity</th>
-      <th>Profinity</th>
+      <th>Profanity</th>
       <th>Key Phrases (Summarisation)</th>
   </tr>
   {%for news in news_records%}
@@ -47,10 +48,11 @@
           <td style="width:5%"> {{news[1]}} </td>
           <td style="width:5%"> {{news[2]}} </td>
           <td style="width:5%"> {{news[3]}} </td>
+          <td style="width:5%"> {{news[4]}} </td>
           <td style="width:40%">
               <ul class="cloud" role="navigation" aria-label="Webdev tag cloud" style="width:100%"  >    
-                  {% for phrase in news[4] %}
-                      <li><a style="font-size:{{20+phrase[0]*10}}">{{phrase[1]}}</a></li>
+                  {% for phrase in news[5] %}
+                      <li><a style="font-size:{{10+phrase[0]*0.5}}">{{phrase[1]}}</a></li>
                   {% endfor %}
               </ul>
           </td>

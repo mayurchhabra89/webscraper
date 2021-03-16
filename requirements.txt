@@ -1,3 +1,5 @@
+pandas
+numpy
 beautifulsoup4==4.9.3
 Flask==1.1.2
 newspaper3k==0.2.8
@@ -5,3 +7,7 @@ nltk==3.5
 rake-nltk==1.0.4
 requests==2.25.1
 textblob==0.15.3
+tld==0.12.5
+python-dotenv
+profanity-check==1.0.3 
+scikit-learn==0.21.3
